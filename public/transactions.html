@@ -1,0 +1,268 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Transaction History - Chase Bank</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body class="dashboard-container">
+    <!-- Header -->
+    <header class="dashboard-header">
+        <div class="container">
+            <nav class="dashboard-nav">
+                <div class="nav-left">
+                    <button class="back-btn" onclick="window.location.href='dashboard.html'">←</button>
+                    <div class="logo">
+                        <div class="logo-icon">🏦</div>
+                        <span class="logo-text">Chase</span>
+                    </div>
+                </div>
+                
+                <div class="user-info">
+                    <div class="user-avatar" id="userInitials">U</div>
+                </div>
+            </nav>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="dashboard-content">
+        <div class="container">
+            <div class="transactions-container">
+                <!-- Page Header -->
+                <section class="page-header">
+                    <h1 class="page-title">Transaction History</h1>
+                    <p class="page-subtitle">Track all your account activity</p>
+                </section>
+
+                <!-- Transaction Summary -->
+                <div class="transaction-summary">
+                    <div class="summary-card">
+                        <div class="summary-header">Total Transactions</div>
+                        <div class="summary-value">
+                            <span id="totalTransactionCount">0</span>
+                            <span class="summary-icon">🧾</span>
+                        </div>
+                    </div>
+                    
+                    <div class="summary-card">
+                        <div class="summary-header">Total Deposited</div>
+                        <div class="summary-value positive">
+                            <span id="summaryTotalDeposited">$0.00</span>
+                            <span class="summary-icon">↗️</span>
+                        </div>
+                    </div>
+                    
+                    <div class="summary-card">
+                        <div class="summary-header">Total Withdrawn</div>
+                        <div class="summary-value negative">
+                            <span id="summaryTotalWithdrawn">$0.00</span>
+                            <span class="summary-icon">↙️</span>
+                        </div>
+                    </div>
+                    
+                    <div class="summary-card">
+                        <div class="summary-header">Net Change</div>
+                        <div class="summary-value" id="summaryNetChange">
+                            <span>$0.00</span>
+                            <span class="summary-icon">💰</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Transaction Filters -->
+                <div class="transaction-filters">
+                    <select class="filter-select" id="transactionFilter">
+                        <option value="all">All Transactions</option>
+                        <option value="deposit">Deposits Only</option>
+                        <option value="withdrawal">Withdrawals Only</option>
+                        <option value="transfer_in">Transfers In</option>
+                        <option value="transfer_out">Transfers Out</option>
+                    </select>
+                    
+                    <button class="filter-btn" onclick="exportTransactions()">
+                        📄 Export
+                    </button>
+                </div>
+
+                <!-- Transactions List -->
+                <div class="transactions-list">
+                    <div id="transactionsList">
+                        <div class="loading-state">
+                            <div class="loading"></div>
+                            <p>Loading transactions...</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <script src="app.js"></script>
+    <script>
+        let allTransactions = [];
+
+        // Load transactions when page loads
+        document.addEventListener('DOMContentLoaded', () => {
+            loadTransactions();
+            setupFilters();
+        });
+
+        async function loadTransactions() {
+            try {
+                const [transactions, profile] = await Promise.all([
+                    apiCall('/api/transactions'),
+                    apiCall('/api/profile')
+                ]);
+                
+                allTransactions = transactions;
+                
+                // Update user info
+                document.getElementById('userInitials').textContent = getInitials(profile.fullName);
+                
+                // Update summary
+                updateTransactionSummary(transactions, profile);
+                
+                // Display transactions
+                displayTransactions(transactions);
+                
+            } catch (error) {
+                console.error('Error loading transactions:', error);
+                document.getElementById('transactionsList').innerHTML = `
+                    <div class="error-state">
+                        <p>Error loading transactions</p>
+                        <button onclick="loadTransactions()" class="btn-primary">Retry</button>
+                    </div>
+                `;
+            }
+        }
+
+        function updateTransactionSummary(transactions, profile) {
+            const totalCount = transactions.length;
+            const totalDeposited = profile.totalDeposits || 0;
+            const totalWithdrawn = profile.totalWithdrawals || 0;
+            const netChange = totalDeposited - totalWithdrawn;
+            
+            document.getElementById('totalTransactionCount').textContent = totalCount;
+            document.getElementById('summaryTotalDeposited').textContent = formatCurrency(totalDeposited);
+            document.getElementById('summaryTotalWithdrawn').textContent = formatCurrency(totalWithdrawn);
+            
+            const netChangeElement = document.getElementById('summaryNetChange');
+            const netChangeSpan = netChangeElement.querySelector('span');
+            netChangeSpan.textContent = formatCurrency(Math.abs(netChange));
+            
+            // Update color based on positive/negative
+            netChangeElement.className = 'summary-value ' + (netChange >= 0 ? 'positive' : 'negative');
+        }
+
+        function displayTransactions(transactions) {
+            const container = document.getElementById('transactionsList');
+            
+            if (transactions.length === 0) {
+                container.innerHTML = `
+                    <div class="empty-state">
+                        <div class="empty-icon">🧾</div>
+                        <h3>No transactions yet</h3>
+                        <p>Your transaction history will appear here</p>
+                        <a href="deposit.html" class="btn-primary">Make your first deposit</a>
+                    </div>
+                `;
+                return;
+            }
+            
+            container.innerHTML = transactions.map(transaction => `
+                <div class="transaction-card">
+                    <div class="transaction-main">
+                        <div class="transaction-icon ${getTransactionIconClass(transaction.type)}">
+                            ${getTransactionIcon(transaction.type)}
+                        </div>
+                        <div class="transaction-details">
+                            <div class="transaction-title">${transaction.description}</div>
+                            <div class="transaction-meta">
+                                <span class="transaction-id">ID: ${transaction.id}</span>
+                                <span class="transaction-date">${formatDate(transaction.timestamp)}</span>
+                            </div>
+                            ${transaction.recipientName ? `<div class="transaction-recipient">To: ${transaction.recipientName}</div>` : ''}
+                            ${transaction.senderName ? `<div class="transaction-sender">From: ${transaction.senderName}</div>` : ''}
+                        </div>
+                    </div>
+                    <div class="transaction-amount ${getAmountClass(transaction.type)}">
+                        ${getAmountPrefix(transaction.type)}${formatCurrency(Math.abs(transaction.amount))}
+                    </div>
+                    <div class="transaction-status ${transaction.status.toLowerCase()}">
+                        ${transaction.status}
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function getTransactionIcon(type) {
+            const icons = {
+                'deposit': '💳',
+                'withdrawal': '💸',
+                'transfer_in': '📥',
+                'transfer_out': '📤'
+            };
+            return icons[type] || '💰';
+        }
+
+        function getTransactionIconClass(type) {
+            const classes = {
+                'deposit': 'deposit',
+                'withdrawal': 'withdrawal',
+                'transfer_in': 'transfer-in',
+                'transfer_out': 'transfer-out'
+            };
+            return classes[type] || 'default';
+        }
+
+        function getAmountClass(type) {
+            return (type === 'deposit' || type === 'transfer_in') ? 'positive' : 'negative';
+        }
+
+        function getAmountPrefix(type) {
+            return (type === 'deposit' || type === 'transfer_in') ? '+' : '-';
+        }
+
+        function setupFilters() {
+            const filterSelect = document.getElementById('transactionFilter');
+            filterSelect.addEventListener('change', (e) => {
+                const filterType = e.target.value;
+                let filteredTransactions = allTransactions;
+                
+                if (filterType !== 'all') {
+                    filteredTransactions = allTransactions.filter(t => t.type === filterType);
+                }
+                
+                displayTransactions(filteredTransactions);
+            });
+        }
+
+        function exportTransactions() {
+            // Simple CSV export
+            const csvContent = [
+                ['Date', 'Type', 'Description', 'Amount', 'Status'],
+                ...allTransactions.map(t => [
+                    new Date(t.timestamp).toLocaleDateString(),
+                    t.type,
+                    t.description,
+                    t.amount,
+                    t.status
+                ])
+            ].map(row => row.join(',')).join('\n');
+            
+            const blob = new Blob([csvContent], { type: 'text/csv' });
+            const url = window.URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = 'chase_transactions.csv';
+            a.click();
+            window.URL.revokeObjectURL(url);
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,381 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Withdraw Funds - Chase Bank</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body class="dashboard-container">
+    <!-- Header -->
+    <header class="dashboard-header">
+        <div class="container">
+            <nav class="dashboard-nav">
+                <div class="nav-left">
+                    <button class="back-btn" onclick="window.location.href='dashboard.html'">←</button>
+                    <div class="logo">
+                        <div class="logo-icon">🏦</div>
+                        <span class="logo-text">Chase</span>
+                    </div>
+                </div>
+                
+                <div class="user-info">
+                    <div class="user-avatar" id="userInitials">U</div>
+                </div>
+            </nav>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="dashboard-content">
+        <div class="container">
+            <div class="transaction-container">
+                <!-- Page Header -->
+                <section class="transaction-header">
+                    <h1 class="transaction-title">Withdraw Funds</h1>
+                    <p class="transaction-subtitle">Transfer money from your account</p>
+                </section>
+
+                <!-- Withdraw Form -->
+                <div class="transaction-card">
+                    <div class="transaction-section-header">
+                        <div class="section-icon withdraw">↕️</div>
+                        <h2>Withdraw Funds</h2>
+                    </div>
+
+                    <form id="withdrawForm">
+                        <!-- Amount Input -->
+                        <div class="form-group">
+                            <label class="form-label" for="withdrawAmount">Withdrawal Amount</label>
+                            <div class="amount-input-container">
+                                <span class="currency-symbol">$</span>
+                                <input 
+                                    type="number" 
+                                    id="withdrawAmount" 
+                                    name="amount" 
+                                    class="amount-input" 
+                                    placeholder="0.00"
+                                    min="0.01"
+                                    step="0.01"
+                                    required
+                                >
+                            </div>
+                            <div class="available-balance">
+                                Available to withdraw: <span id="availableBalance">$0.00</span>
+                            </div>
+                        </div>
+
+                        <!-- Withdrawal Method Selection -->
+                        <div class="form-group">
+                            <label class="form-label" for="withdrawalMethod">Withdrawal Method</label>
+                            <select id="withdrawalMethod" name="withdrawalMethod" class="form-select" required>
+                                <option value="">Select withdrawal method</option>
+                                <option value="Bank Transfer">Bank Transfer</option>
+                                <option value="Check">Check</option>
+                                <option value="Wire Transfer">Wire Transfer</option>
+                                <option value="ATM">ATM Withdrawal</option>
+                            </select>
+                        </div>
+
+                        <!-- Withdrawal Details Section -->
+                        <div id="withdrawalDetailsSection" class="payment-details-section" style="display: none;">
+                            <!-- Bank Transfer Details -->
+                            <div id="bankTransferDetails" class="payment-details" style="display: none;">
+                                <div class="details-header">
+                                    <div class="details-icon">🏦</div>
+                                    <h3>Withdrawal Details for bank transfer</h3>
+                                </div>
+                                
+                                <div class="form-group">
+                                    <label class="form-label" for="recipientAccountNumber">Recipient Account Number</label>
+                                    <input 
+                                        type="text" 
+                                        id="recipientAccountNumber" 
+                                        name="recipientAccountNumber" 
+                                        class="form-input" 
+                                        placeholder="Enter recipient's bank account number"
+                                    >
+                                </div>
+                                
+                                <div class="form-group">
+                                    <label class="form-label" for="recipientRoutingNumber">Routing Number</label>
+                                    <input 
+                                        type="text" 
+                                        id="recipientRoutingNumber" 
+                                        name="recipientRoutingNumber" 
+                                        class="form-input" 
+                                        placeholder="Enter bank routing number"
+                                    >
+                                </div>
+                                
+                                <div class="form-group">
+                                    <label class="form-label" for="recipientBankName">Bank Name</label>
+                                    <input 
+                                        type="text" 
+                                        id="recipientBankName" 
+                                        name="recipientBankName" 
+                                        class="form-input" 
+                                        placeholder="Enter recipient's bank name"
+                                    >
+                                </div>
+                            </div>
+
+                            <!-- Check Details -->
+                            <div id="checkDetails" class="payment-details" style="display: none;">
+                                <div class="details-header">
+                                    <div class="details-icon">📄</div>
+                                    <h3>Check Withdrawal</h3>
+                                </div>
+                                
+                                <div class="form-group">
+                                    <label class="form-label" for="mailingAddress">Mailing Address</label>
+                                    <textarea 
+                                        id="mailingAddress" 
+                                        name="mailingAddress" 
+                                        class="form-textarea" 
+                                        placeholder="Enter address where check should be mailed"
+                                        rows="3"
+                                    ></textarea>
+                                </div>
+                            </div>
+
+                            <!-- Wire Transfer Details -->
+                            <div id="wireTransferDetails" class="payment-details" style="display: none;">
+                                <div class="details-header">
+                                    <div class="details-icon">🔄</div>
+                                    <h3>Wire Transfer Details</h3>
+                                </div>
+                                
+                                <div class="form-group">
+                                    <label class="form-label" for="wireRecipientName">Recipient Name</label>
+                                    <input 
+                                        type="text" 
+                                        id="wireRecipientName" 
+                                        name="wireRecipientName" 
+                                        class="form-input" 
+                                        placeholder="Full name of recipient"
+                                    >
+                                </div>
+                                
+                                <div class="form-group">
+                                    <label class="form-label" for="wireAccountNumber">Account Number</label>
+                                    <input 
+                                        type="text" 
+                                        id="wireAccountNumber" 
+                                        name="wireAccountNumber" 
+                                        class="form-input" 
+                                        placeholder="Recipient's account number"
+                                    >
+                                </div>
+                                
+                                <div class="form-group">
+                                    <label class="form-label" for="wireRoutingNumber">Routing Number</label>
+                                    <input 
+                                        type="text" 
+                                        id="wireRoutingNumber" 
+                                        name="wireRoutingNumber" 
+                                        class="form-input" 
+                                        placeholder="Bank routing number"
+                                    >
+                                </div>
+                            </div>
+
+                            <!-- ATM Details -->
+                            <div id="atmDetails" class="payment-details" style="display: none;">
+                                <div class="details-header">
+                                    <div class="details-icon">🏧</div>
+                                    <h3>ATM Withdrawal</h3>
+                                </div>
+                                
+                                <div class="atm-info">
+                                    <p>Your withdrawal will be available at any Chase ATM within 24 hours. You will receive a confirmation code via SMS.</p>
+                                </div>
+                                
+                                <div class="form-group">
+                                    <label class="form-label" for="phoneNumber">Phone Number for SMS</label>
+                                    <input 
+                                        type="tel" 
+                                        id="phoneNumber" 
+                                        name="phoneNumber" 
+                                        class="form-input" 
+                                        placeholder="+1 (555) 123-4567"
+                                    >
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Submit Button -->
+                        <button type="submit" class="transaction-btn withdraw-btn">
+                            Withdraw $<span id="withdrawButtonAmount">0.00</span>
+                        </button>
+                    </form>
+                </div>
+
+                <!-- Account Balance Info -->
+                <div class="balance-info-card">
+                    <div class="balance-info-header">
+                        <div class="balance-icon">💰</div>
+                        <div>
+                            <div class="balance-label">Current Balance</div>
+                            <div class="balance-amount" id="currentBalance">$0.00</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <script src="app.js"></script>
+    <script>
+        let userBalance = 0;
+
+        // Load user data and setup withdraw form
+        document.addEventListener('DOMContentLoaded', () => {
+            loadUserData();
+            setupWithdrawForm();
+        });
+
+        async function loadUserData() {
+            try {
+                const profile = await apiCall('/api/profile');
+                userBalance = profile.balance;
+                document.getElementById('userInitials').textContent = getInitials(profile.fullName);
+                document.getElementById('currentBalance').textContent = formatCurrency(profile.balance);
+                document.getElementById('availableBalance').textContent = formatCurrency(profile.balance);
+            } catch (error) {
+                console.error('Error loading user data:', error);
+            }
+        }
+
+        function setupWithdrawForm() {
+            const form = document.getElementById('withdrawForm');
+            const amountInput = document.getElementById('withdrawAmount');
+            const withdrawalMethodSelect = document.getElementById('withdrawalMethod');
+            const withdrawalDetailsSection = document.getElementById('withdrawalDetailsSection');
+            const buttonAmount = document.getElementById('withdrawButtonAmount');
+
+            // Update button amount as user types
+            amountInput.addEventListener('input', (e) => {
+                const amount = parseFloat(e.target.value) || 0;
+                buttonAmount.textContent = amount.toFixed(2);
+                
+                // Validate amount against balance
+                if (amount > userBalance) {
+                    e.target.setCustomValidity('Amount exceeds available balance');
+                } else {
+                    e.target.setCustomValidity('');
+                }
+            });
+
+            // Show/hide withdrawal details based on method selection
+            withdrawalMethodSelect.addEventListener('change', (e) => {
+                const method = e.target.value;
+                
+                // Hide all withdrawal details
+                document.querySelectorAll('.payment-details').forEach(detail => {
+                    detail.style.display = 'none';
+                });
+
+                if (method) {
+                    withdrawalDetailsSection.style.display = 'block';
+                    
+                    // Show relevant withdrawal details
+                    switch (method) {
+                        case 'Bank Transfer':
+                            document.getElementById('bankTransferDetails').style.display = 'block';
+                            break;
+                        case 'Check':
+                            document.getElementById('checkDetails').style.display = 'block';
+                            break;
+                        case 'Wire Transfer':
+                            document.getElementById('wireTransferDetails').style.display = 'block';
+                            break;
+                        case 'ATM':
+                            document.getElementById('atmDetails').style.display = 'block';
+                            break;
+                    }
+                } else {
+                    withdrawalDetailsSection.style.display = 'none';
+                }
+            });
+
+            // Handle form submission
+            form.addEventListener('submit', handleWithdrawSubmission);
+        }
+
+        async function handleWithdrawSubmission(e) {
+            e.preventDefault();
+
+            const formData = new FormData(e.target);
+            const amount = parseFloat(formData.get('amount'));
+            const withdrawalMethod = formData.get('withdrawalMethod');
+
+            if (!amount || amount <= 0) {
+                showError('Please enter a valid amount');
+                return;
+            }
+
+            if (amount > userBalance) {
+                showError('Insufficient funds');
+                return;
+            }
+
+            if (!withdrawalMethod) {
+                showError('Please select a withdrawal method');
+                return;
+            }
+
+            // Collect withdrawal details based on method
+            const withdrawalDetails = {};
+            switch (withdrawalMethod) {
+                case 'Bank Transfer':
+                    withdrawalDetails.accountNumber = formData.get('recipientAccountNumber');
+                    withdrawalDetails.routingNumber = formData.get('recipientRoutingNumber');
+                    withdrawalDetails.bankName = formData.get('recipientBankName');
+                    break;
+                case 'Check':
+                    withdrawalDetails.mailingAddress = formData.get('mailingAddress');
+                    break;
+                case 'Wire Transfer':
+                    withdrawalDetails.recipientName = formData.get('wireRecipientName');
+                    withdrawalDetails.accountNumber = formData.get('wireAccountNumber');
+                    withdrawalDetails.routingNumber = formData.get('wireRoutingNumber');
+                    break;
+                case 'ATM':
+                    withdrawalDetails.phoneNumber = formData.get('phoneNumber');
+                    break;
+            }
+
+            try {
+                const submitBtn = e.target.querySelector('button[type="submit"]');
+                submitBtn.disabled = true;
+                submitBtn.innerHTML = '<span class="loading"></span> Processing...';
+
+                const response = await apiCall('/api/withdraw', {
+                    method: 'POST',
+                    body: JSON.stringify({
+                        amount,
+                        withdrawalMethod,
+                        withdrawalDetails
+                    })
+                });
+
+                showSuccess('Withdrawal successful! Your account has been updated.');
+                setTimeout(() => {
+                    window.location.href = 'dashboard.html';
+                }, 2000);
+
+            } catch (error) {
+                showError(error.message);
+            } finally {
+                const submitBtn = e.target.querySelector('button[type="submit"]');
+                submitBtn.disabled = false;
+                submitBtn.innerHTML = `Withdraw $${amount.toFixed(2)}`;
+            }
+        }
+    </script>
+</body>
+</html>

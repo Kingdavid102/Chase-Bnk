@@ -1,0 +1,685 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard - Chase Bank</title>
+    <link rel="stylesheet" href="styless.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body class="dashboard-container">
+    <!-- Header -->
+    <header class="dashboard-header">
+        <div class="container">
+            <nav class="dashboard-nav">
+                <div class="logo">
+                    <div class="logo-icon">🏦</div>
+                    <span class="logo-text">Chase Admin</span>
+                </div>
+                
+                <div class="admin-info">
+                    <div class="admin-badge">ADMIN</div>
+                    <button class="logout-btn" onclick="adminLogout()">Logout</button>
+                </div>
+            </nav>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="dashboard-content">
+        <div class="container">
+            <!-- Welcome Section -->
+            <section class="admin-welcome">
+                <h1 class="admin-title">Admin Dashboard</h1>
+                <p class="admin-subtitle">Complete control over Chase Bank system</p>
+            </section>
+
+            <!-- Admin Stats -->
+            <div class="admin-stats-grid">
+                <div class="stat-card admin-stat">
+                    <div class="stat-header">Total Users</div>
+                    <div class="stat-value">
+                        <span id="totalUsers">0</span>
+                        <span class="stat-icon">👥</span>
+                    </div>
+                </div>
+                
+                <div class="stat-card admin-stat">
+                    <div class="stat-header">Active Users</div>
+                    <div class="stat-value">
+                        <span id="activeUsers">0</span>
+                        <span class="stat-icon">✅</span>
+                    </div>
+                </div>
+                
+                <div class="stat-card admin-stat">
+                    <div class="stat-header">Banned Users</div>
+                    <div class="stat-value">
+                        <span id="bannedUsers">0</span>
+                        <span class="stat-icon">🚫</span>
+                    </div>
+                </div>
+                
+                <div class="stat-card admin-stat">
+                    <div class="stat-header">Total Transactions</div>
+                    <div class="stat-value">
+                        <span id="totalTransactions">0</span>
+                        <span class="stat-icon">🧾</span>
+                    </div>
+                </div>
+                
+                <div class="stat-card admin-stat">
+                    <div class="stat-header">Total System Balance</div>
+                    <div class="stat-value">
+                        <span id="totalBalance">$0.00</span>
+                        <span class="stat-icon">💰</span>
+                    </div>
+                </div>
+                
+                <div class="stat-card admin-stat">
+                    <div class="stat-header">Admin Balance</div>
+                    <div class="stat-value">
+                        <span class="infinite-balance">∞</span>
+                        <span class="stat-icon">👑</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Admin Actions -->
+            <div class="admin-sections">
+                <!-- User Management -->
+                <section class="admin-section">
+                    <div class="section-header">
+                        <h2 class="section-title">User Management</h2>
+                        <button class="refresh-btn" onclick="loadUsers()">🔄 Refresh</button>
+                    </div>
+                    
+                    <div class="users-container">
+                        <div class="users-filters">
+                            <select id="userStatusFilter" class="filter-select">
+                                <option value="all">All Users</option>
+                                <option value="Active">Active Only</option>
+                                <option value="Banned">Banned Only</option>
+                            </select>
+                            <input type="text" id="userSearch" class="search-input" placeholder="Search users...">
+                        </div>
+                        
+                        <div class="users-list" id="usersList">
+                            <div class="loading-state">
+                                <div class="loading"></div>
+                                <p>Loading users...</p>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Transaction Management -->
+                <section class="admin-section">
+                    <div class="section-header">
+                        <h2 class="section-title">Transaction Management</h2>
+                        <button class="refresh-btn" onclick="loadTransactions()">🔄 Refresh</button>
+                    </div>
+                    
+                    <div class="transactions-container">
+                        <div class="transactions-filters">
+                            <select id="transactionTypeFilter" class="filter-select">
+                                <option value="all">All Transactions</option>
+                                <option value="deposit">Deposits</option>
+                                <option value="withdrawal">Withdrawals</option>
+                                <option value="transfer_in">Transfers In</option>
+                                <option value="transfer_out">Transfers Out</option>
+                                <option value="admin_deposit">Admin Deposits</option>
+                                <option value="admin_balance_edit">Balance Edits</option>
+                            </select>
+                            <button class="export-btn" onclick="exportTransactions()">📄 Export</button>
+                        </div>
+                        
+                        <div class="transactions-list" id="transactionsList">
+                            <div class="loading-state">
+                                <div class="loading"></div>
+                                <p>Loading transactions...</p>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+            </div>
+        </div>
+    </main>
+
+    <!-- Modals -->
+    <div id="fundUserModal" class="modal">
+        <div class="modal-content">
+            <h3 class="modal-title">Fund User Account</h3>
+            <form id="fundUserForm">
+                <div class="form-group">
+                    <label class="form-label">User</label>
+                    <div class="selected-user" id="selectedUserInfo">
+                        <div class="user-avatar" id="fundUserAvatar">U</div>
+                        <div class="user-details">
+                            <div class="user-name" id="fundUserName">User Name</div>
+                            <div class="user-account" id="fundUserAccount">Account: 1234567890</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <label class="form-label" for="fundAmount">Amount to Add</label>
+                    <div class="amount-input-container">
+                        <span class="currency-symbol">$</span>
+                        <input type="number" id="fundAmount" name="amount" class="amount-input" placeholder="0.00" min="0.01" step="0.01" required>
+                    </div>
+                </div>
+                
+                <div class="modal-buttons">
+                    <button type="button" class="modal-btn modal-btn-secondary" onclick="closeFundModal()">Cancel</button>
+                    <button type="submit" class="modal-btn modal-btn-primary">Fund Account</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <div id="editBalanceModal" class="modal">
+        <div class="modal-content">
+            <h3 class="modal-title">Edit Account Balance</h3>
+            <form id="editBalanceForm">
+                <div class="form-group">
+                    <label class="form-label">User</label>
+                    <div class="selected-user" id="editBalanceUserInfo">
+                        <div class="user-avatar" id="editBalanceUserAvatar">U</div>
+                        <div class="user-details">
+                            <div class="user-name" id="editBalanceUserName">User Name</div>
+                            <div class="user-account" id="editBalanceUserAccount">Account: 1234567890</div>
+                            <div class="current-balance">Current: <span id="editBalanceCurrentBalance">$0.00</span></div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <label class="form-label" for="newBalance">New Balance</label>
+                    <div class="amount-input-container">
+                        <span class="currency-symbol">$</span>
+                        <input type="number" id="newBalance" name="newBalance" class="amount-input" placeholder="0.00" min="0" step="0.01" required>
+                    </div>
+                </div>
+                
+                <div class="modal-buttons">
+                    <button type="button" class="modal-btn modal-btn-secondary" onclick="closeEditBalanceModal()">Cancel</button>
+                    <button type="submit" class="modal-btn modal-btn-primary">Update Balance</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script src="app.js"></script>
+    <script>
+        let allUsers = [];
+        let allTransactions = [];
+        let selectedUser = null;
+
+        // Check admin authentication
+        document.addEventListener('DOMContentLoaded', () => {
+            checkAdminAuth();
+            loadAdminData();
+            setupFilters();
+        });
+
+        function checkAdminAuth() {
+            const token = localStorage.getItem('adminToken');
+            if (!token) {
+                window.location.href = 'admin.html';
+                return;
+            }
+            authToken = token;
+        }
+
+        async function loadAdminData() {
+            try {
+                await Promise.all([
+                    loadAdminStats(),
+                    loadUsers(),
+                    loadTransactions()
+                ]);
+            } catch (error) {
+                console.error('Error loading admin data:', error);
+                showError('Error loading admin data');
+            }
+        }
+
+        async function loadAdminStats() {
+            try {
+                const stats = await apiCall('/api/admin/stats');
+                
+                document.getElementById('totalUsers').textContent = stats.totalUsers;
+                document.getElementById('activeUsers').textContent = stats.activeUsers;
+                document.getElementById('bannedUsers').textContent = stats.bannedUsers;
+                document.getElementById('totalTransactions').textContent = stats.totalTransactions;
+                document.getElementById('totalBalance').textContent = formatCurrency(stats.totalBalance);
+                
+            } catch (error) {
+                console.error('Error loading admin stats:', error);
+            }
+        }
+
+        async function loadUsers() {
+            try {
+                const users = await apiCall('/api/admin/users');
+                allUsers = users;
+                displayUsers(users);
+            } catch (error) {
+                console.error('Error loading users:', error);
+                document.getElementById('usersList').innerHTML = `
+                    <div class="error-state">
+                        <p>Error loading users</p>
+                        <button onclick="loadUsers()" class="btn-primary">Retry</button>
+                    </div>
+                `;
+            }
+        }
+
+        async function loadTransactions() {
+            try {
+                const transactions = await apiCall('/api/admin/transactions');
+                allTransactions = transactions;
+                displayTransactions(transactions);
+            } catch (error) {
+                console.error('Error loading transactions:', error);
+                document.getElementById('transactionsList').innerHTML = `
+                    <div class="error-state">
+                        <p>Error loading transactions</p>
+                        <button onclick="loadTransactions()" class="btn-primary">Retry</button>
+                    </div>
+                `;
+            }
+        }
+
+        function displayUsers(users) {
+            const container = document.getElementById('usersList');
+            
+            if (users.length === 0) {
+                container.innerHTML = `
+                    <div class="empty-state">
+                        <p>No users found</p>
+                    </div>
+                `;
+                return;
+            }
+
+            container.innerHTML = users.map(user => `
+                <div class="user-card ${user.status.toLowerCase()}">
+                    <div class="user-main">
+                        <div class="user-avatar">${getInitials(user.fullName)}</div>
+                        <div class="user-details">
+                            <div class="user-name">${user.fullName}</div>
+                            <div class="user-email">${user.email}</div>
+                            <div class="user-account">Account: ${user.accountNumber}</div>
+                            <div class="user-meta">
+                                <span class="user-balance">${formatCurrency(user.balance)}</span>
+                                <span class="user-status ${user.status.toLowerCase()}">${user.status}</span>
+                                <span class="user-date">Joined: ${formatDate(user.createdAt)}</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="user-actions">
+                        <button class="action-btn fund-btn" onclick="openFundModal('${user.id}')">💰 Fund</button>
+                        <button class="action-btn edit-btn" onclick="openEditBalanceModal('${user.id}')">✏️ Edit Balance</button>
+                        ${user.status === 'Active' ? 
+                            `<button class="action-btn ban-btn" onclick="banUser('${user.id}')">🚫 Ban</button>` :
+                            `<button class="action-btn unban-btn" onclick="unbanUser('${user.id}')">✅ Unban</button>`
+                        }
+                        <button class="action-btn delete-btn" onclick="confirmDeleteUser('${user.id}')">🗑️ Delete</button>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function displayTransactions(transactions) {
+            const container = document.getElementById('transactionsList');
+            
+            if (transactions.length === 0) {
+                container.innerHTML = `
+                    <div class="empty-state">
+                        <p>No transactions found</p>
+                    </div>
+                `;
+                return;
+            }
+
+            container.innerHTML = transactions.slice(0, 50).map(transaction => {
+                const user = allUsers.find(u => u.id === transaction.userId);
+                return `
+                    <div class="transaction-card admin-transaction">
+                        <div class="transaction-main">
+                            <div class="transaction-icon ${getTransactionIconClass(transaction.type)}">
+                                ${getTransactionIcon(transaction.type)}
+                            </div>
+                            <div class="transaction-details">
+                                <div class="transaction-title">${transaction.description}</div>
+                                <div class="transaction-meta">
+                                    <span class="transaction-id">ID: ${transaction.id}</span>
+                                    <span class="transaction-date">${formatDate(transaction.timestamp)}</span>
+                                    <span class="transaction-user">User: ${user ? user.fullName : 'Unknown'}</span>
+                                </div>
+                                ${transaction.recipientName ? `<div class="transaction-recipient">To: ${transaction.recipientName}</div>` : ''}
+                                ${transaction.senderName ? `<div class="transaction-sender">From: ${transaction.senderName}</div>` : ''}
+                                ${transaction.adminId ? `<div class="transaction-admin">Admin: ${transaction.adminId}</div>` : ''}
+                            </div>
+                        </div>
+                        <div class="transaction-amount ${getAmountClass(transaction.type)}">
+                            ${getAmountPrefix(transaction.type)}${formatCurrency(Math.abs(transaction.amount))}
+                        </div>
+                        <div class="transaction-status ${transaction.status.toLowerCase()}">
+                            ${transaction.status}
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        function setupFilters() {
+            const userStatusFilter = document.getElementById('userStatusFilter');
+            const userSearch = document.getElementById('userSearch');
+            const transactionTypeFilter = document.getElementById('transactionTypeFilter');
+
+            userStatusFilter.addEventListener('change', filterUsers);
+            userSearch.addEventListener('input', filterUsers);
+            transactionTypeFilter.addEventListener('change', filterTransactions);
+        }
+
+        function filterUsers() {
+            const statusFilter = document.getElementById('userStatusFilter').value;
+            const searchTerm = document.getElementById('userSearch').value.toLowerCase();
+            
+            let filteredUsers = allUsers;
+            
+            if (statusFilter !== 'all') {
+                filteredUsers = filteredUsers.filter(user => user.status === statusFilter);
+            }
+            
+            if (searchTerm) {
+                filteredUsers = filteredUsers.filter(user => 
+                    user.fullName.toLowerCase().includes(searchTerm) ||
+                    user.email.toLowerCase().includes(searchTerm) ||
+                    user.accountNumber.includes(searchTerm)
+                );
+            }
+            
+            displayUsers(filteredUsers);
+        }
+
+        function filterTransactions() {
+            const typeFilter = document.getElementById('transactionTypeFilter').value;
+            
+            let filteredTransactions = allTransactions;
+            
+            if (typeFilter !== 'all') {
+                filteredTransactions = filteredTransactions.filter(t => t.type === typeFilter);
+            }
+            
+            displayTransactions(filteredTransactions);
+        }
+
+        // User Management Functions
+        function openFundModal(userId) {
+            const user = allUsers.find(u => u.id === userId);
+            if (!user) return;
+
+            selectedUser = user;
+            document.getElementById('fundUserAvatar').textContent = getInitials(user.fullName);
+            document.getElementById('fundUserName').textContent = user.fullName;
+            document.getElementById('fundUserAccount').textContent = `Account: ${user.accountNumber}`;
+            
+            document.getElementById('fundUserModal').classList.add('active');
+        }
+
+        function closeFundModal() {
+            document.getElementById('fundUserModal').classList.remove('active');
+            document.getElementById('fundUserForm').reset();
+            selectedUser = null;
+        }
+
+        function openEditBalanceModal(userId) {
+            const user = allUsers.find(u => u.id === userId);
+            if (!user) return;
+
+            selectedUser = user;
+            document.getElementById('editBalanceUserAvatar').textContent = getInitials(user.fullName);
+            document.getElementById('editBalanceUserName').textContent = user.fullName;
+            document.getElementById('editBalanceUserAccount').textContent = `Account: ${user.accountNumber}`;
+            document.getElementById('editBalanceCurrentBalance').textContent = formatCurrency(user.balance);
+            document.getElementById('newBalance').value = user.balance.toFixed(2);
+            
+            document.getElementById('editBalanceModal').classList.add('active');
+        }
+
+        function closeEditBalanceModal() {
+            document.getElementById('editBalanceModal').classList.remove('active');
+            document.getElementById('editBalanceForm').reset();
+            selectedUser = null;
+        }
+
+        // Form Handlers
+        document.getElementById('fundUserForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const amount = parseFloat(document.getElementById('fundAmount').value);
+            
+            if (!selectedUser || !amount || amount <= 0) {
+                showError('Please enter a valid amount');
+                return;
+            }
+
+            try {
+                const submitBtn = e.target.querySelector('button[type="submit"]');
+                submitBtn.disabled = true;
+                submitBtn.innerHTML = '<span class="loading"></span> Processing...';
+
+                await apiCall('/api/admin/fund-user', {
+                    method: 'POST',
+                    body: JSON.stringify({
+                        userId: selectedUser.id,
+                        amount: amount
+                    })
+                });
+
+                showSuccess(`Successfully funded ${selectedUser.fullName} with ${formatCurrency(amount)}`);
+                closeFundModal();
+                await loadAdminData();
+
+            } catch (error) {
+                showError(error.message);
+            } finally {
+                const submitBtn = e.target.querySelector('button[type="submit"]');
+                submitBtn.disabled = false;
+                submitBtn.textContent = 'Fund Account';
+            }
+        });
+
+        document.getElementById('editBalanceForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const newBalance = parseFloat(document.getElementById('newBalance').value);
+            
+            if (!selectedUser || newBalance < 0) {
+                showError('Please enter a valid balance');
+                return;
+            }
+
+            try {
+                const submitBtn = e.target.querySelector('button[type="submit"]');
+                submitBtn.disabled = true;
+                submitBtn.innerHTML = '<span class="loading"></span> Processing...';
+
+                await apiCall('/api/admin/edit-balance', {
+                    method: 'POST',
+                    body: JSON.stringify({
+                        userId: selectedUser.id,
+                        newBalance: newBalance
+                    })
+                });
+
+                showSuccess(`Successfully updated ${selectedUser.fullName}'s balance to ${formatCurrency(newBalance)}`);
+                closeEditBalanceModal();
+                await loadAdminData();
+
+            } catch (error) {
+                showError(error.message);
+            } finally {
+                const submitBtn = e.target.querySelector('button[type="submit"]');
+                submitBtn.disabled = false;
+                submitBtn.textContent = 'Update Balance';
+            }
+        });
+
+        async function banUser(userId) {
+            const user = allUsers.find(u => u.id === userId);
+            if (!user) return;
+
+            showModal(
+                'Ban User',
+                `Are you sure you want to ban ${user.fullName}? They will not be able to access their account.`,
+                [
+                    {
+                        text: 'Cancel',
+                        class: 'modal-btn-secondary',
+                        onclick: hideModal
+                    },
+                    {
+                        text: 'Ban User',
+                        class: 'modal-btn-danger',
+                        onclick: async () => {
+                            hideModal();
+                            try {
+                                await apiCall('/api/admin/ban-user', {
+                                    method: 'POST',
+                                    body: JSON.stringify({ userId })
+                                });
+                                showSuccess(`${user.fullName} has been banned`);
+                                await loadAdminData();
+                            } catch (error) {
+                                showError(error.message);
+                            }
+                        }
+                    }
+                ]
+            );
+        }
+
+        async function unbanUser(userId) {
+            const user = allUsers.find(u => u.id === userId);
+            if (!user) return;
+
+            try {
+                await apiCall('/api/admin/unban-user', {
+                    method: 'POST',
+                    body: JSON.stringify({ userId })
+                });
+                showSuccess(`${user.fullName} has been unbanned`);
+                await loadAdminData();
+            } catch (error) {
+                showError(error.message);
+            }
+        }
+
+        function confirmDeleteUser(userId) {
+            const user = allUsers.find(u => u.id === userId);
+            if (!user) return;
+
+            showModal(
+                'Delete User',
+                `Are you sure you want to permanently delete ${user.fullName}? This action cannot be undone and will remove all their data including transactions and receipts.`,
+                [
+                    {
+                        text: 'Cancel',
+                        class: 'modal-btn-secondary',
+                        onclick: hideModal
+                    },
+                    {
+                        text: 'Delete User',
+                        class: 'modal-btn-danger',
+                        onclick: async () => {
+                            hideModal();
+                            try {
+                                await apiCall('/api/admin/delete-user', {
+                                    method: 'DELETE',
+                                    body: JSON.stringify({ userId })
+                                });
+                                showSuccess(`${user.fullName} has been deleted`);
+                                await loadAdminData();
+                            } catch (error) {
+                                showError(error.message);
+                            }
+                        }
+                    }
+                ]
+            );
+        }
+
+        function exportTransactions() {
+            const csvContent = [
+                ['Date', 'Type', 'User', 'Description', 'Amount', 'Status', 'Transaction ID'],
+                ...allTransactions.map(t => {
+                    const user = allUsers.find(u => u.id === t.userId);
+                    return [
+                        new Date(t.timestamp).toLocaleDateString(),
+                        t.type,
+                        user ? user.fullName : 'Unknown',
+                        t.description,
+                        t.amount,
+                        t.status,
+                        t.id
+                    ];
+                })
+            ].map(row => row.join(',')).join('\n');
+            
+            const blob = new Blob([csvContent], { type: 'text/csv' });
+            const url = window.URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = 'admin_transactions.csv';
+            a.click();
+            window.URL.revokeObjectURL(url);
+        }
+
+        function adminLogout() {
+            localStorage.removeItem('adminToken');
+            window.location.href = 'admin.html';
+        }
+
+        // Helper functions for transaction display
+        function getTransactionIcon(type) {
+            const icons = {
+                'deposit': '💳',
+                'withdrawal': '💸',
+                'transfer_in': '📥',
+                'transfer_out': '📤',
+                'admin_deposit': '👑',
+                'admin_balance_edit': '✏️'
+            };
+            return icons[type] || '💰';
+        }
+
+        function getTransactionIconClass(type) {
+            const classes = {
+                'deposit': 'deposit',
+                'withdrawal': 'withdrawal',
+                'transfer_in': 'transfer-in',
+                'transfer_out': 'transfer-out',
+                'admin_deposit': 'admin-deposit',
+                'admin_balance_edit': 'admin-edit'
+            };
+            return classes[type] || 'default';
+        }
+
+        function getAmountClass(type) {
+            return (type === 'deposit' || type === 'transfer_in' || type === 'admin_deposit') ? 'positive' : 'negative';
+        }
+
+        function getAmountPrefix(type) {
+            return (type === 'deposit' || type === 'transfer_in' || type === 'admin_deposit') ? '+' : 
+                   (type === 'admin_balance_edit') ? '' : '-';
+        }
+    </script>
+</body>
+</html>

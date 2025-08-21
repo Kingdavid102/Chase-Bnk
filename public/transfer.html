@@ -1,0 +1,341 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Send Money - Chase Bank</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body class="dashboard-container">
+    <!-- Header -->
+    <header class="dashboard-header">
+        <div class="container">
+            <nav class="dashboard-nav">
+                <div class="nav-left">
+                    <button class="back-btn" onclick="window.location.href='dashboard.html'">←</button>
+                    <div class="logo">
+                        <div class="logo-icon">🏦</div>
+                        <span class="logo-text">Chase</span>
+                    </div>
+                </div>
+                
+                <div class="user-info">
+                    <div class="user-avatar" id="userInitials">U</div>
+                </div>
+            </nav>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="dashboard-content">
+        <div class="container">
+            <div class="transaction-container">
+                <!-- Page Header -->
+                <section class="transaction-header">
+                    <h1 class="transaction-title">Send Money</h1>
+                    <p class="transaction-subtitle">Transfer funds to another Chase Bank user</p>
+                </section>
+
+                <!-- Transfer Form -->
+                <div class="transaction-card">
+                    <div class="transaction-section-header">
+                        <div class="section-icon transfer">✈️</div>
+                        <h2>New Transfer</h2>
+                    </div>
+
+                    <form id="transferForm">
+                        <!-- Recipient Account Number -->
+                        <div class="form-group">
+                            <label class="form-label" for="recipientAccount">Recipient's Account Number</label>
+                            <div class="account-input-container">
+                                <input 
+                                    type="text" 
+                                    id="recipientAccount" 
+                                    name="recipientAccountNumber" 
+                                    class="form-input" 
+                                    placeholder="Enter 10-digit account number"
+                                    maxlength="10"
+                                    pattern="[0-9]{10}"
+                                    required
+                                >
+                                <button type="button" class="search-btn" id="searchRecipient">🔍</button>
+                            </div>
+                        </div>
+
+                        <!-- Recipient Info Display -->
+                        <div id="recipientInfo" class="recipient-info" style="display: none;">
+                            <div class="recipient-card">
+                                <div class="recipient-avatar" id="recipientAvatar">?</div>
+                                <div class="recipient-details">
+                                    <div class="recipient-name" id="recipientName">Loading...</div>
+                                    <div class="recipient-account" id="recipientAccountDisplay">Account: </div>
+                                </div>
+                                <div class="recipient-status">✓</div>
+                            </div>
+                        </div>
+
+                        <!-- Transfer Amount -->
+                        <div class="form-group">
+                            <label class="form-label" for="transferAmount">Transfer Amount</label>
+                            <div class="amount-input-container">
+                                <span class="currency-symbol">$</span>
+                                <input 
+                                    type="number" 
+                                    id="transferAmount" 
+                                    name="amount" 
+                                    class="amount-input" 
+                                    placeholder="0.00"
+                                    min="0.01"
+                                    step="0.01"
+                                    required
+                                >
+                            </div>
+                            <div class="available-balance">
+                                Available to send: <span id="availableBalance">$0.00</span>
+                            </div>
+                        </div>
+
+                        <!-- Transfer Note (Optional) -->
+                        <div class="form-group">
+                            <label class="form-label" for="transferNote">Note (Optional)</label>
+                            <input 
+                                type="text" 
+                                id="transferNote" 
+                                name="note" 
+                                class="form-input" 
+                                placeholder="What's this for?"
+                                maxlength="100"
+                            >
+                        </div>
+
+                        <!-- Submit Button -->
+                        <button type="submit" class="transaction-btn transfer-btn" disabled>
+                            Send $<span id="transferButtonAmount">0.00</span>
+                        </button>
+                    </form>
+                </div>
+
+                <!-- Account Balance Info -->
+                <div class="balance-info-card">
+                    <div class="balance-info-header">
+                        <div class="balance-icon">💰</div>
+                        <div>
+                            <div class="balance-label">Current Balance</div>
+                            <div class="balance-amount" id="currentBalance">$0.00</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Recent Recipients -->
+                <div class="recent-recipients" id="recentRecipients" style="display: none;">
+                    <h3>Recent Recipients</h3>
+                    <div class="recipients-list" id="recipientsList">
+                        <!-- Recent recipients will be populated here -->
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <script src="app.js"></script>
+    <script>
+        let userBalance = 0;
+        let selectedRecipient = null;
+
+        // Load user data and setup transfer form
+        document.addEventListener('DOMContentLoaded', () => {
+            loadUserData();
+            setupTransferForm();
+        });
+
+        async function loadUserData() {
+            try {
+                const profile = await apiCall('/api/profile');
+                userBalance = profile.balance;
+                document.getElementById('userInitials').textContent = getInitials(profile.fullName);
+                document.getElementById('currentBalance').textContent = formatCurrency(profile.balance);
+                document.getElementById('availableBalance').textContent = formatCurrency(profile.balance);
+            } catch (error) {
+                console.error('Error loading user data:', error);
+            }
+        }
+
+        function setupTransferForm() {
+            const form = document.getElementById('transferForm');
+            const amountInput = document.getElementById('transferAmount');
+            const recipientInput = document.getElementById('recipientAccount');
+            const searchBtn = document.getElementById('searchRecipient');
+            const buttonAmount = document.getElementById('transferButtonAmount');
+            const submitBtn = form.querySelector('button[type="submit"]');
+
+            // Update button amount as user types
+            amountInput.addEventListener('input', (e) => {
+                const amount = parseFloat(e.target.value) || 0;
+                buttonAmount.textContent = amount.toFixed(2);
+                
+                // Validate amount against balance
+                if (amount > userBalance) {
+                    e.target.setCustomValidity('Amount exceeds available balance');
+                } else {
+                    e.target.setCustomValidity('');
+                }
+
+                updateSubmitButton();
+            });
+
+            // Search recipient when account number is entered
+            recipientInput.addEventListener('input', (e) => {
+                const accountNumber = e.target.value;
+                if (accountNumber.length === 10) {
+                    searchRecipient(accountNumber);
+                } else {
+                    hideRecipientInfo();
+                    updateSubmitButton();
+                }
+            });
+
+            // Search button click
+            searchBtn.addEventListener('click', () => {
+                const accountNumber = recipientInput.value;
+                if (accountNumber.length === 10) {
+                    searchRecipient(accountNumber);
+                }
+            });
+
+            // Handle form submission
+            form.addEventListener('submit', handleTransferSubmission);
+
+            // Only allow numeric input for account number
+            recipientInput.addEventListener('input', (e) => {
+                e.target.value = e.target.value.replace(/[^0-9]/g, '');
+            });
+        }
+
+        async function searchRecipient(accountNumber) {
+            try {
+                const searchBtn = document.getElementById('searchRecipient');
+                searchBtn.innerHTML = '<span class="loading"></span>';
+
+                const response = await apiCall(`/api/user/${accountNumber}`);
+                
+                selectedRecipient = response;
+                showRecipientInfo(response);
+                updateSubmitButton();
+
+            } catch (error) {
+                hideRecipientInfo();
+                showError('Account not found. Please check the account number.');
+                selectedRecipient = null;
+                updateSubmitButton();
+            } finally {
+                const searchBtn = document.getElementById('searchRecipient');
+                searchBtn.innerHTML = '🔍';
+            }
+        }
+
+        function showRecipientInfo(recipient) {
+            const recipientInfo = document.getElementById('recipientInfo');
+            const recipientAvatar = document.getElementById('recipientAvatar');
+            const recipientName = document.getElementById('recipientName');
+            const recipientAccountDisplay = document.getElementById('recipientAccountDisplay');
+
+            recipientAvatar.textContent = getInitials(recipient.fullName);
+            recipientName.textContent = recipient.fullName;
+            recipientAccountDisplay.textContent = `Account: ${recipient.accountNumber}`;
+
+            recipientInfo.style.display = 'block';
+        }
+
+        function hideRecipientInfo() {
+            const recipientInfo = document.getElementById('recipientInfo');
+            recipientInfo.style.display = 'none';
+            selectedRecipient = null;
+        }
+
+        function updateSubmitButton() {
+            const submitBtn = document.querySelector('button[type="submit"]');
+            const amount = parseFloat(document.getElementById('transferAmount').value) || 0;
+            
+            const isValid = selectedRecipient && amount > 0 && amount <= userBalance;
+            submitBtn.disabled = !isValid;
+        }
+
+        async function handleTransferSubmission(e) {
+            e.preventDefault();
+
+            const formData = new FormData(e.target);
+            const amount = parseFloat(formData.get('amount'));
+            const recipientAccountNumber = formData.get('recipientAccountNumber');
+            const note = formData.get('note');
+
+            if (!selectedRecipient) {
+                showError('Please select a valid recipient');
+                return;
+            }
+
+            if (!amount || amount <= 0) {
+                showError('Please enter a valid amount');
+                return;
+            }
+
+            if (amount > userBalance) {
+                showError('Insufficient funds');
+                return;
+            }
+
+            // Show confirmation modal
+            showModal(
+                'Confirm Transfer',
+                `Send ${formatCurrency(amount)} to ${selectedRecipient.fullName}?${note ? `\n\nNote: ${note}` : ''}`,
+                [
+                    {
+                        text: 'Cancel',
+                        class: 'modal-btn-secondary',
+                        onclick: hideModal
+                    },
+                    {
+                        text: 'Send Money',
+                        class: 'modal-btn-primary',
+                        onclick: () => {
+                            hideModal();
+                            processTransfer(amount, recipientAccountNumber, note);
+                        }
+                    }
+                ]
+            );
+        }
+
+        async function processTransfer(amount, recipientAccountNumber, note) {
+            try {
+                const submitBtn = document.querySelector('button[type="submit"]');
+                submitBtn.disabled = true;
+                submitBtn.innerHTML = '<span class="loading"></span> Sending...';
+
+                const response = await apiCall('/api/transfer', {
+                    method: 'POST',
+                    body: JSON.stringify({
+                        recipientAccountNumber,
+                        amount,
+                        note
+                    })
+                });
+
+                showSuccess(`Transfer successful! Sent ${formatCurrency(amount)} to ${selectedRecipient.fullName}.`);
+                
+                setTimeout(() => {
+                    window.location.href = 'dashboard.html';
+                }, 2000);
+
+            } catch (error) {
+                showError(error.message);
+                const submitBtn = document.querySelector('button[type="submit"]');
+                submitBtn.disabled = false;
+                submitBtn.innerHTML = `Send $${amount.toFixed(2)}`;
+            }
+        }
+    </script>
+</body>
+</html>

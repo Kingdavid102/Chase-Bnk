@@ -1,0 +1,491 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Deposit Funds - Chase Bank</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body class="dashboard-container">
+    <!-- Header -->
+    <header class="dashboard-header">
+        <div class="container">
+            <nav class="dashboard-nav">
+                <div class="nav-left">
+                    <button class="back-btn" onclick="window.location.href='dashboard.html'">
+                        <i class="fas fa-arrow-left"></i>
+                    </button>
+                    <div class="logo">
+                        <div class="logo-icon">
+                            <i class="fas fa-university"></i>
+                        </div>
+                        <span class="logo-text">Chase Bank</span>
+                    </div>
+                </div>
+                
+                <div class="user-info">
+                    <div class="user-avatar" id="userInitials">U</div>
+                </div>
+            </nav>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="dashboard-content">
+        <div class="container">
+            <div class="transaction-container">
+                <!-- Page Header -->
+                <section class="transaction-header">
+                    <h1 class="transaction-title">Deposit Funds</h1>
+                    <p class="transaction-subtitle">Add money to your Chase Bank account</p>
+                </section>
+
+                <!-- Deposit Form -->
+                <div class="transaction-card">
+                    <div class="transaction-section-header">
+                        <div class="section-icon deposit">
+                            <i class="fas fa-plus-circle"></i>
+                        </div>
+                        <h2>New Deposit</h2>
+                    </div>
+
+                    <form id="depositForm">
+                        <!-- Amount Input -->
+                        <div class="form-group">
+                            <label class="form-label" for="depositAmount">
+                                <i class="fas fa-dollar-sign"></i> Deposit Amount
+                            </label>
+                            <div class="amount-input-container">
+                                <span class="currency-symbol">$</span>
+                                <input 
+                                    type="number" 
+                                    id="depositAmount" 
+                                    name="amount" 
+                                    class="amount-input" 
+                                    placeholder="0.00"
+                                    min="0.01"
+                                    step="0.01"
+                                    required
+                                >
+                            </div>
+                            <div class="available-balance">
+                                Minimum deposit: $0.01
+                            </div>
+                        </div>
+
+                        <!-- Payment Method Selection -->
+                        <div class="form-group">
+                            <label class="form-label" for="paymentMethod">
+                                <i class="fas fa-credit-card"></i> Payment Method
+                            </label>
+                            <select id="paymentMethod" name="paymentMethod" class="form-select" required>
+                                <option value="">Select payment method</option>
+                                <option value="Card">Credit/Debit Card</option>
+                                <option value="Bank Transfer">Bank Transfer</option>
+                                <option value="PayPal">PayPal</option>
+                                <option value="Wire Transfer">Wire Transfer</option>
+                                <option value="Check">Check Deposit</option>
+                            </select>
+                        </div>
+
+                        <!-- Payment Details Section -->
+                        <div id="paymentDetailsSection" class="payment-details-section" style="display: none;">
+                            <!-- Payment details will be shown here based on selection -->
+                        </div>
+
+                        <!-- Submit Button -->
+                        <button type="submit" class="transaction-btn deposit-btn">
+                            <i class="fas fa-arrow-down"></i> Deposit $<span id="depositButtonAmount">0.00</span>
+                        </button>
+                    </form>
+
+                    <!-- Deposit Restriction Notice (Always shown after form submission) -->
+                    <div id="depositRestriction" class="deposit-restriction" style="display: none;">
+                        <div class="restriction-icon">
+                            <i class="fas fa-exclamation-triangle"></i>
+                        </div>
+                        <div class="restriction-content">
+                            <h3>Deposit Not Allowed</h3>
+                            <p>You Are Not Allowed To Deposit. Please Contact Support To Resolve This Issue.</p>
+                            <button class="support-btn" onclick="contactSupport()">
+                                <i class="fas fa-headset"></i> Contact Support
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Account Balance Info -->
+                <div class="balance-info-card">
+                    <div class="balance-info-header">
+                        <div class="balance-icon">
+                            <i class="fas fa-wallet"></i>
+                        </div>
+                        <div>
+                            <div class="balance-label">Current Balance</div>
+                            <div class="balance-amount" id="currentBalance">$0.00</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Support Contact Modal -->
+    <div id="supportModal" class="modal">
+        <div class="modal-content">
+            <h3 class="modal-title">Contact Support</h3>
+            <p class="modal-message">
+                Please contact our support team to resolve deposit restrictions:<br><br>
+                
+                <strong>contact:</strong>Click The Supporter Chat button below to start live chat<br>
+                <strong>Live Chat:</strong> Available 24/7 in our mobile app
+            </p>
+            <div class="modal-buttons">
+                <button class="modal-btn modal-btn-primary" onclick="hideSupportModal()">OK</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="app.js"></script>
+    <!-- Begin of Chaport Live Chat code --> <script type="text/javascript"> (function(w,d,v3){ w.chaportConfig = { appId : '68a740ff1a08a7cdbdd82f7a' };  if(w.chaport)return;v3=w.chaport={};v3._q=[];v3._l={};v3.q=function(){v3._q.push(arguments)};v3.on=function(e,fn){if(!v3._l[e])v3._l[e]=[];v3._l[e].push(fn)};var s=d.createElement('script');s.type='text/javascript';s.async=true;s.src='https://app.chaport.com/javascripts/insert.js';var ss=d.getElementsByTagName('script')[0];ss.parentNode.insertBefore(s,ss)})(window, document); </script> <!-- End of Chaport Live Chat code -->
+    <script>
+        // Load user data and setup deposit form
+        document.addEventListener('DOMContentLoaded', () => {
+            loadUserData();
+            setupDepositForm();
+        });
+
+        async function loadUserData() {
+            try {
+                const profile = await apiCall('/api/profile');
+                document.getElementById('userInitials').textContent = getInitials(profile.fullName);
+                document.getElementById('currentBalance').textContent = formatCurrency(profile.balance);
+            } catch (error) {
+                console.error('Error loading user data:', error);
+            }
+        }
+
+        function setupDepositForm() {
+            const form = document.getElementById('depositForm');
+            const amountInput = document.getElementById('depositAmount');
+            const paymentMethodSelect = document.getElementById('paymentMethod');
+            const paymentDetailsSection = document.getElementById('paymentDetailsSection');
+            const buttonAmount = document.getElementById('depositButtonAmount');
+
+            // Update button amount as user types
+            amountInput.addEventListener('input', (e) => {
+                const amount = parseFloat(e.target.value) || 0;
+                buttonAmount.textContent = amount.toFixed(2);
+            });
+
+            // Show/hide payment details based on method selection
+            paymentMethodSelect.addEventListener('change', (e) => {
+                const method = e.target.value;
+                
+                if (method) {
+                    paymentDetailsSection.style.display = 'block';
+                    paymentDetailsSection.innerHTML = getPaymentDetailsHTML(method);
+                } else {
+                    paymentDetailsSection.style.display = 'none';
+                    paymentDetailsSection.innerHTML = '';
+                }
+            });
+
+            // Handle form submission
+            form.addEventListener('submit', handleDepositSubmission);
+        }
+
+        function getPaymentDetailsHTML(method) {
+            const templates = {
+                'Card': `
+                    <div class="payment-details">
+                        <div class="details-header">
+                            <div class="details-icon"><i class="fas fa-credit-card"></i></div>
+                            <h3>Card Details</h3>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label class="form-label" for="cardNumber">Card Number</label>
+                            <input type="text" id="cardNumber" name="cardNumber" class="form-input" placeholder="1234 5678 9012 3456" maxlength="19">
+                        </div>
+                        
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label class="form-label" for="expiryDate">Expiry Date</label>
+                                <input type="text" id="expiryDate" name="expiryDate" class="form-input" placeholder="MM/YY" maxlength="5">
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label" for="cvv">CVV</label>
+                                <input type="text" id="cvv" name="cvv" class="form-input" placeholder="123" maxlength="4">
+                            </div>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label class="form-label" for="cardholderName">Cardholder Name</label>
+                            <input type="text" id="cardholderName" name="cardholderName" class="form-input" placeholder="Name on card">
+                        </div>
+                    </div>
+                `,
+                'Bank Transfer': `
+                    <div class="payment-details">
+                        <div class="details-header">
+                            <div class="details-icon"><i class="fas fa-university"></i></div>
+                            <h3>Bank Transfer Details</h3>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label class="form-label" for="bankAccountNumber">Account Number</label>
+                            <input type="text" id="bankAccountNumber" name="bankAccountNumber" class="form-input" placeholder="Your bank account number">
+                        </div>
+                        
+                        <div class="form-group">
+                            <label class="form-label" for="routingNumber">Routing Number</label>
+                            <input type="text" id="routingNumber" name="routingNumber" class="form-input" placeholder="Your bank routing number">
+                        </div>
+                        
+                        <div class="form-group">
+                            <label class="form-label" for="bankName">Bank Name</label>
+                            <input type="text" id="bankName" name="bankName" class="form-input" placeholder="Your bank name">
+                        </div>
+                    </div>
+                `,
+                'PayPal': `
+                    <div class="payment-details">
+                        <div class="details-header">
+                            <div class="details-icon"><i class="fab fa-paypal"></i></div>
+                            <h3>PayPal Payment</h3>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label class="form-label" for="paypalEmail">PayPal Email</label>
+                            <input type="email" id="paypalEmail" name="paypalEmail" class="form-input" placeholder="your.paypal@email.com">
+                        </div>
+                    </div>
+                `,
+                'Wire Transfer': `
+                    <div class="payment-details">
+                        <div class="details-header">
+                            <div class="details-icon"><i class="fas fa-exchange-alt"></i></div>
+                            <h3>Wire Transfer Details</h3>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label class="form-label" for="wireAccountNumber">Account Number</label>
+                            <input type="text" id="wireAccountNumber" name="wireAccountNumber" class="form-input" placeholder="Wire transfer account number">
+                        </div>
+                        
+                        <div class="form-group">
+                            <label class="form-label" for="wireRoutingNumber">Routing Number</label>
+                            <input type="text" id="wireRoutingNumber" name="wireRoutingNumber" class="form-input" placeholder="Wire routing number">
+                        </div>
+                    </div>
+                `,
+                'Check': `
+                    <div class="payment-details">
+                        <div class="details-header">
+                            <div class="details-icon"><i class="fas fa-file-invoice-dollar"></i></div>
+                            <h3>Check Deposit</h3>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label class="form-label" for="checkNumber">Check Number</label>
+                            <input type="text" id="checkNumber" name="checkNumber" class="form-input" placeholder="Check number">
+                        </div>
+                        
+                        <div class="form-group">
+                            <label class="form-label" for="checkBank">Issuing Bank</label>
+                            <input type="text" id="checkBank" name="checkBank" class="form-input" placeholder="Bank that issued the check">
+                        </div>
+                    </div>
+                `
+            };
+            
+            return templates[method] || '';
+        }
+
+        async function handleDepositSubmission(e) {
+            e.preventDefault();
+
+            const formData = new FormData(e.target);
+            const amount = parseFloat(formData.get('amount'));
+            const paymentMethod = formData.get('paymentMethod');
+
+            if (!amount || amount <= 0) {
+                showError('Please enter a valid amount');
+                return;
+            }
+
+            if (!paymentMethod) {
+                showError('Please select a payment method');
+                return;
+            }
+
+            try {
+                const submitBtn = e.target.querySelector('button[type="submit"]');
+                submitBtn.disabled = true;
+                submitBtn.innerHTML = '<span class="loading"></span> Processing...';
+
+                // Simulate processing delay
+                await new Promise(resolve => setTimeout(resolve, 2000));
+
+                // ALWAYS show the deposit restriction message regardless of account status
+                showDepositRestriction();
+
+            } catch (error) {
+                showError(error.message);
+            } finally {
+                const submitBtn = e.target.querySelector('button[type="submit"]');
+                submitBtn.disabled = false;
+                submitBtn.innerHTML = `<i class="fas fa-arrow-down"></i> Deposit $${amount.toFixed(2)}`;
+            }
+        }
+
+        function showDepositRestriction() {
+            const restrictionElement = document.getElementById('depositRestriction');
+            restrictionElement.style.display = 'flex';
+            
+            // Scroll to the restriction message
+            restrictionElement.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        }
+
+        function contactSupport() {
+            // Show support modal
+            const modal = document.getElementById('supportModal');
+            modal.classList.add('active');
+        }
+
+        function hideSupportModal() {
+            const modal = document.getElementById('supportModal');
+            modal.classList.remove('active');
+        }
+    </script>
+
+    <style>
+        /* Deposit Restriction Styles */
+        .deposit-restriction {
+            display: none;
+            align-items: center;
+            gap: 16px;
+            padding: 20px;
+            background: #fff3cd;
+            border: 1px solid #ffeaa7;
+            border-radius: 12px;
+            margin-top: 24px;
+            animation: fadeIn 0.5s ease;
+        }
+
+        .restriction-icon {
+            font-size: 2rem;
+            color: #f39c12;
+            flex-shrink: 0;
+        }
+
+        .restriction-content {
+            flex: 1;
+        }
+
+        .restriction-content h3 {
+            color: #856404;
+            margin-bottom: 8px;
+            font-size: 1.2rem;
+        }
+
+        .restriction-content p {
+            color: #856404;
+            margin-bottom: 16px;
+            line-height: 1.5;
+        }
+
+        .support-btn {
+            background: #1170d4;
+            color: white;
+            border: none;
+            padding: 10px 16px;
+            border-radius: 8px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .support-btn:hover {
+            background: #0d5eb4;
+        }
+
+        /* Modal backdrop for support modal */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal.active {
+            display: flex;
+        }
+
+        .modal-content {
+            background: white;
+            padding: 32px;
+            border-radius: 16px;
+            max-width: 400px;
+            width: 90%;
+            text-align: center;
+        }
+
+        .modal-title {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: #333;
+            margin-bottom: 16px;
+        }
+
+        .modal-message {
+            color: #666;
+            margin-bottom: 24px;
+            line-height: 1.5;
+        }
+
+        .modal-buttons {
+            display: flex;
+            gap: 12px;
+            justify-content: center;
+        }
+
+        .modal-btn {
+            padding: 12px 24px;
+            border: none;
+            border-radius: 8px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .modal-btn-primary {
+            background: #1170d4;
+            color: white;
+        }
+
+        .modal-btn-primary:hover {
+            background: #0d5eb4;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+    </style>
+</body>
+</html>

@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Register - Chase Bank</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <header class="header">
+            <div class="header-content">
+                <div class="logo">
+                    <div class="logo-icon">🏦</div>
+                    <span class="logo-text">Chase Bank</span>
+                </div>
+                <button class="dashboard-btn" onclick="window.location.href='index.html'">Home</button>
+            </div>
+        </header>
+
+        <!-- Registration Form -->
+        <div class="form-container">
+            <h2 class="form-title">Create Your Account</h2>
+            <p class="form-subtitle">Join millions who trust Chase Bank with their finances</p>
+            
+            <form id="registerForm">
+                <div class="form-group">
+                    <label class="form-label" for="fullName">Full Name</label>
+                    <input 
+                        type="text" 
+                        id="fullName" 
+                        name="fullName" 
+                        class="form-input" 
+                        placeholder="Enter your full name"
+                        required
+                    >
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label" for="username">Username</label>
+                    <input 
+                        type="text" 
+                        id="username" 
+                        name="username" 
+                        class="form-input" 
+                        placeholder="Choose a username"
+                        required
+                    >
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label" for="email">Email Address</label>
+                    <input 
+                        type="email" 
+                        id="email" 
+                        name="email" 
+                        class="form-input" 
+                        placeholder="Enter your email address"
+                        required
+                    >
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label" for="password">Password</label>
+                    <input 
+                        type="password" 
+                        id="password" 
+                        name="password" 
+                        class="form-input" 
+                        placeholder="Create a strong password"
+                        required
+                        minlength="6"
+                    >
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label" for="confirmPassword">Confirm Password</label>
+                    <input 
+                        type="password" 
+                        id="confirmPassword" 
+                        name="confirmPassword" 
+                        class="form-input" 
+                        placeholder="Confirm your password"
+                        required
+                        minlength="6"
+                    >
+                </div>
+
+                <button type="submit" class="form-button">Create Account</button>
+            </form>
+
+            <div class="form-link">
+                Already have an account? <a href="login.html">Sign In</a>
+            </div>
+
+            <div class="account-benefits">
+                <h3>Your Account Benefits:</h3>
+                <ul>
+                    <li>✓ 10-digit account number automatically generated</li>
+                    <li>✓ Account starts with $0 balance</li>
+                    <li>✓ Active status immediately upon registration</li>
+                    <li>✓ Confirmation email with account details</li>
+                    <li>✓ Secure banking with industry-standard encryption</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <script src="app.js"></script>
+</body>
+</html>

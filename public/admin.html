@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Access - Chase Bank</title>
+    <link rel="stylesheet" href="styless.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <header class="header">
+            <div class="header-content">
+                <div class="logo">
+                    <div class="logo-icon">🏦</div>
+                    <span class="logo-text">Chase Bank</span>
+                </div>
+                <button class="dashboard-btn" onclick="window.location.href='index.html'">Home</button>
+            </div>
+        </header>
+
+        <!-- Admin Key Section -->
+        <div class="form-container" id="adminKeySection">
+            <h2 class="form-title">🔐 Admin Access</h2>
+            <p class="form-subtitle">Enter the admin key to proceed</p>
+            
+            <form id="adminKeyForm">
+                <div class="form-group">
+                    <label class="form-label" for="adminKey">Admin Key</label>
+                    <input 
+                        type="password" 
+                        id="adminKey" 
+                        name="adminKey" 
+                        class="form-input" 
+                        placeholder="Enter admin key"
+                        required
+                    >
+                </div>
+
+                <button type="submit" class="form-button">Verify Key</button>
+            </form>
+
+            <div class="form-link">
+                <a href="login.html">← Back to User Login</a>
+            </div>
+        </div>
+
+        <!-- Admin Login Section -->
+        <div class="form-container" id="adminLoginSection" style="display: none;">
+            <h2 class="form-title">👨‍💼 Admin Login</h2>
+            <p class="form-subtitle">Sign in with your admin credentials</p>
+            
+            <form id="adminLoginForm">
+                <div class="form-group">
+                    <label class="form-label" for="email">Admin Email</label>
+                    <input 
+                        type="email" 
+                        id="email" 
+                        name="email" 
+                        class="form-input" 
+                        placeholder="admincbl@gmail.com"
+                        required
+                    >
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label" for="password">Admin Password</label>
+                    <input 
+                        type="password" 
+                        id="password" 
+                        name="password" 
+                        class="form-input" 
+                        placeholder="Enter admin password"
+                        required
+                    >
+                </div>
+
+                <button type="submit" class="form-button">Sign In as Admin</button>
+            </form>
+
+            <div class="admin-info">
+                <h3>Admin Privileges:</h3>
+                <ul>
+                    <li>✓ View all users and transactions</li>
+                    <li>✓ Fund any user account</li>
+                    <li>✓ Ban/delete user accounts</li>
+                    <li>✓ Edit account balances</li>
+                    <li>✓ Approve/reject transactions</li>
+                    <li>✓ Infinite balance privileges</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <script src="app.js"></script>
+</body>
+</html>

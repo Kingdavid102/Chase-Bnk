@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chase Bank - Banking Made Simple</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <header class="header">
+            <div class="header-content">
+                <div class="logo">
+                    <div class="logo-icon">🏦</div>
+                    <span class="logo-text">Chase Bank</span>
+                </div>
+                <button class="dashboard-btn" onclick="checkAuth()">Dashboard</button>
+            </div>
+        </header>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <div class="hero-section">
+                <div class="trust-badge">
+                    ⭐ Trusted by millions worldwide
+                </div>
+                
+                <h1 class="hero-title">
+                    Banking <span class="highlight">Made Simple</span>
+                </h1>
+                
+                <p class="hero-description">
+                    Experience the future of banking with our secure, fast, and intuitive 
+                    platform. Manage your finances with confidence and ease.
+                </p>
+                
+                <div class="cta-buttons">
+                    <button class="btn-primary" onclick="window.location.href='register.html'">
+                        Open Account Today →
+                    </button>
+                    <button class="btn-secondary" onclick="window.location.href='login.html'">
+                        Sign In
+                    </button>
+                </div>
+                
+                <div class="stats">
+                    <div class="stat-item">
+                        <div class="stat-number">2M+</div>
+                        <div class="stat-label">Active Users</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-number">$50B+</div>
+                        <div class="stat-label">Secured</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-number">24/7</div>
+                        <div class="stat-label">Support</div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Added comprehensive footer section -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-section">
+                    <div class="footer-logo">
+                        <div class="logo-icon">🏦</div>
+                        <span class="logo-text">Chase Bank</span>
+                    </div>
+                    <p class="footer-description">
+                        Your trusted financial partner providing secure, innovative banking solutions 
+                        for individuals and businesses worldwide.
+                    </p>
+                    <div class="social-links">
+                        <a href="#" class="social-link">📘</a>
+                        <a href="#" class="social-link">🐦</a>
+                        <a href="#" class="social-link">📷</a>
+                        <a href="#" class="social-link">💼</a>
+                    </div>
+                </div>
+                
+                <div class="footer-section">
+                    <h3>Banking Services</h3>
+                    <ul>
+                        <li><a href="#">Personal Banking</a></li>
+                        <li><a href="#">Business Banking</a></li>
+                        <li><a href="#">Loans & Credit</a></li>
+                        <li><a href="#">Investment Services</a></li>
+                        <li><a href="#">Mobile Banking</a></li>
+                    </ul>
+                </div>
+                
+                <div class="footer-section">
+                    <h3>Support</h3>
+                    <ul>
+                        <li><a href="#">Help Center</a></li>
+                        <li><a href="#">Contact Us</a></li>
+                        <li><a href="#">Find ATM/Branch</a></li>
+                        <li><a href="#">Security Center</a></li>
+                        <li><a href="#">Report Fraud</a></li>
+                    </ul>
+                </div>
+                
+                <div class="footer-section">
+                    <h3>Company</h3>
+                    <ul>
+                        <li><a href="#">About Us</a></li>
+                        <li><a href="#">Careers</a></li>
+                        <li><a href="#">Press</a></li>
+                        <li><a href="#">Privacy Policy</a></li>
+                        <li><a href="#">Terms of Service</a></li>
+                    </ul>
+                </div>
+            </div>
+            
+            <div class="footer-bottom">
+                <p>&copy; 2024 Chase Bank. All rights reserved. Member FDIC. Equal Housing Lender.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="app.js"></script>
+</body>
+</html>

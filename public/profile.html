@@ -1,0 +1,216 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Profile Settings - Chase Bank</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body class="dashboard-container">
+    <!-- Header -->
+    <header class="dashboard-header">
+        <div class="container">
+            <nav class="dashboard-nav">
+                <div class="nav-left">
+                    <button class="back-btn" onclick="window.location.href='dashboard.html'">←</button>
+                    <div class="logo">
+                        <div class="logo-icon">🏦</div>
+                        <span class="logo-text">Chase</span>
+                    </div>
+                </div>
+                
+                <div class="user-info">
+                    <div class="user-avatar" id="userInitials">U</div>
+                </div>
+            </nav>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="dashboard-content">
+        <div class="container">
+            <div class="profile-container">
+                <!-- Profile Header -->
+                <section class="profile-header">
+                    <h1 class="page-title">Profile Settings</h1>
+                    <p class="page-subtitle">Manage your account information</p>
+                </section>
+
+                <!-- Profile Card -->
+                <div class="profile-card">
+                    <div class="profile-avatar-section">
+                        <div class="profile-avatar" id="profileAvatar">EH</div>
+                        <div class="profile-basic-info">
+                            <h2 class="profile-name" id="profileName">Loading...</h2>
+                            <p class="profile-email" id="profileEmail">Loading...</p>
+                        </div>
+                    </div>
+
+                    <div class="profile-details">
+                        <div class="detail-row">
+                            <span class="detail-label">Account Number</span>
+                            <span class="detail-value" id="profileAccountNumber">Loading...</span>
+                        </div>
+                        
+                        <div class="detail-row">
+                            <span class="detail-label">Status</span>
+                            <span class="detail-value status-active">Active</span>
+                        </div>
+                        
+                        <div class="detail-row">
+                            <span class="detail-label">Member Since</span>
+                            <span class="detail-value" id="profileMemberSince">Loading...</span>
+                        </div>
+                        
+                        <div class="detail-row">
+                            <span class="detail-label">Balance</span>
+                            <span class="detail-value" id="profileBalance">$0.00</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Personal Information -->
+                <div class="info-section">
+                    <div class="section-header">
+                        <h3 class="section-title">Personal Information</h3>
+                        <button class="edit-btn">Edit Profile</button>
+                    </div>
+                    
+                    <div class="info-grid">
+                        <div class="info-item">
+                            <div class="info-icon">✉️</div>
+                            <div class="info-content">
+                                <div class="info-label">Email Address</div>
+                                <div class="info-value" id="personalEmail">Loading...</div>
+                            </div>
+                        </div>
+                        
+                        <div class="info-item">
+                            <div class="info-icon">👤</div>
+                            <div class="info-content">
+                                <div class="info-label">Full Name</div>
+                                <div class="info-value" id="personalName">Loading...</div>
+                            </div>
+                        </div>
+                        
+                        <div class="info-item">
+                            <div class="info-icon">📞</div>
+                            <div class="info-content">
+                                <div class="info-label">Phone Number</div>
+                                <div class="info-value">+1 (555) 123-4567</div>
+                            </div>
+                        </div>
+                        
+                        <div class="info-item">
+                            <div class="info-icon">📍</div>
+                            <div class="info-content">
+                                <div class="info-label">Address</div>
+                                <div class="info-value">123 Main Street, City, State 12345</div>
+                            </div>
+                        </div>
+                        
+                        <div class="info-item">
+                            <div class="info-icon">💳</div>
+                            <div class="info-content">
+                                <div class="info-label">Account Number</div>
+                                <div class="info-value" id="personalAccountNumber">Loading...</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Account Actions -->
+                <div class="account-actions">
+                    <h3 class="section-title">Account Actions</h3>
+                    <div class="actions-list">
+                        <button class="action-item" onclick="window.location.href='transactions.html'">
+                            <span class="action-icon">🧾</span>
+                            <span class="action-text">View Transaction History</span>
+                            <span class="action-arrow">→</span>
+                        </button>
+                        
+                        <button class="action-item">
+                            <span class="action-icon">🔒</span>
+                            <span class="action-text">Change Password</span>
+                            <span class="action-arrow">→</span>
+                        </button>
+                        
+                        <button class="action-item">
+                            <span class="action-icon">📧</span>
+                            <span class="action-text">Email Preferences</span>
+                            <span class="action-arrow">→</span>
+                        </button>
+                        
+                        <button class="action-item danger" onclick="confirmAccountClosure()">
+                            <span class="action-icon">⚠️</span>
+                            <span class="action-text">Close Account</span>
+                            <span class="action-arrow">→</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <script src="app.js"></script>
+    <script>
+        // Load profile data when page loads
+        document.addEventListener('DOMContentLoaded', () => {
+            loadProfileData();
+        });
+
+        async function loadProfileData() {
+            try {
+                const profile = await apiCall('/api/profile');
+                
+                // Update profile information
+                document.getElementById('profileName').textContent = profile.fullName;
+                document.getElementById('profileEmail').textContent = profile.email;
+                document.getElementById('profileAccountNumber').textContent = profile.accountNumber;
+                document.getElementById('profileBalance').textContent = formatCurrency(profile.balance);
+                document.getElementById('profileMemberSince').textContent = formatDate(profile.createdAt);
+                
+                // Update personal information
+                document.getElementById('personalEmail').textContent = profile.email;
+                document.getElementById('personalName').textContent = profile.fullName;
+                document.getElementById('personalAccountNumber').textContent = profile.accountNumber;
+                
+                // Update avatars
+                const initials = getInitials(profile.fullName);
+                document.getElementById('userInitials').textContent = initials;
+                document.getElementById('profileAvatar').textContent = initials;
+                
+            } catch (error) {
+                console.error('Error loading profile:', error);
+                showError('Error loading profile data');
+            }
+        }
+
+        function confirmAccountClosure() {
+            showModal(
+                'Close Account',
+                'Are you sure you want to close your account? This action cannot be undone.',
+                [
+                    {
+                        text: 'Cancel',
+                        class: 'modal-btn-secondary',
+                        onclick: hideModal
+                    },
+                    {
+                        text: 'Close Account',
+                        class: 'modal-btn-danger',
+                        onclick: () => {
+                            hideModal();
+                            // Implement account closure logic
+                            alert('Account closure feature will be implemented by admin.');
+                        }
+                    }
+                ]
+            );
+        }
+    </script>
+</body>
+</html>
